@@ -1,1 +1,9 @@
 'coc-html','coc-json','coc-prettier','coc-tsserver','coc-tslint-plugin'
+
+composer require --dev barryvdh/laravel-ide-helper
+php artisan ide-helper:generate
+
+pkg install nodejs
+pkg install php
+npm install -g intelephense
+:CocInstall coc-intelephense coc-blade coc-snippets coc-json

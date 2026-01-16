@@ -1,0 +1,494 @@
+========================================
+ARCHIVO: ./init.lua
+========================================
+-- ========================================================================== --
+--                               CONFIGURACIÓN LUA                            --
+-- ========================================================================== --
+
+-- Cargar variable de entorno (Asegúrate de ponerla en tu ~/.bashrc)
+vim.env.GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or "TU_KEY_AQUI"
+
+-- 1. Instalar Lazy.nvim (Gestor de Plugins)
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- 2. Configuración de Plugins
+require("lazy").setup({
+  -- AVANTE (IA)
+  {
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    build = "make",
+    opts = {
+      provider = "gemini",
+      providers = {
+        gemini = { model = "gemini-1.5-flash", max_tokens = 4096, temperature = 0 },
+      },
+      windows = { width = 45 },
+      appearance = {
+          use_icons = true,
+      },
+    },
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "stevearc/dressing.nvim",
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
+  },
+
+  -- LOS PLUGINS QUE TE FALTABAN (Añade aquí los de tu plugins.vim)
+  { "nvim-tree/nvim-tree.lua", config = function() require("nvim-tree").setup() end },
+  { "nvim-lualine/lualine.nvim", config = function() require("lualine").setup() end },
+  { "akinsho/bufferline.nvim", version = "*", dependencies = "nvim-tree/nvim-web-devicons", config = function() require("bufferline").setup() end },
+  { "numToStr/Comment.nvim", config = function() require("Comment").setup() end },
+  { "akinsho/toggleterm.nvim", version = "*", config = function() require("toggleterm").setup() end },
+  { "lewis6991/gitsigns.nvim", config = function() require("gitsigns").setup() end },
+  { "nvim-telescope/telescope.nvim", dependencies = { "nvim-lua/plenary.nvim" } },
+  
+  -- COC.nvim (Sigue siendo útil para VimScript)
+  { "neoclide/coc.nvim", branch = "release" },
+  
+  -- Tema TokyoNight
+  { "folke/tokyonight.nvim", lazy = false, priority = 1000 },
+
+  -- Nerd Font
+  { "nvim-tree/nvim-web-devicons" },
+
+  -- Render Markdown (Vista previa dentro de Neovim)
+  -- Actualización de Treesitter (Importante)
+  -- Para que este plugin funcione, Neovim debe entender la estructura del Markdown. Una vez que guardes el archivo y reinicies Neovim, ejecuta este comando dentro:
+  -- :TSInstall markdown markdown_inline
+  -- Dentro de Neovim, puedes escribir estos comandos en la línea de comandos:
+  --​:RenderMarkdown toggle: Alterna entre activado y desactivado (el más útil).
+  --​:RenderMarkdown enable: Activa el renderizado.
+  --​:RenderMarkdown disable: Desactiva el renderizado (vuelve a ver el código Markdown puro).
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+    ft = { "markdown", "Avante" }, -- Se activa en archivos md y en el chat de Avante
+    opts = {
+      heading = {
+        enabled = true,
+        icons = { '1️⃣ ', '2️⃣ ', '3️⃣ ', '4️⃣ ', '5️⃣ ', '6️⃣ ' },
+      },
+      code = {
+        sign = false,
+        width = "block",
+        right_pad = 1,
+      },
+    },
+  },
+})
+
+-- 3. Cargar configuraciones de VimScript (Tu antiguo init.vim y mapas)
+-- Esto carga tus settings.vim, maps.vim y coc.vim
+vim.cmd('source ' .. vim.fn.stdpath('config') .. '/settings.vim')
+
+
+========================================
+ARCHIVO: ./bufferline.lua
+========================================
+require("bufferline").setup{
+  options = {
+    numbers = "ordinal",
+    separator_style = "padded_slant"
+  },
+}
+
+
+========================================
+ARCHIVO: ./coc-settings.json
+========================================
+{
+  "coc.preferences.jumpCommand": "tab drop",
+  "diagnostic.enableMessage": "never",
+  "diagnostic.virtualText": true,
+  "diagnostic.virtualTextCurrentLineOnly": false,
+  "diagnostic.virtualTextPrefix": "(e)",
+  "suggest.completionItemKindLabels": {
+    "method": "   Method",
+    "function": "   Function",
+    "variable": " [] Variable",
+    "field": "   Field",
+    "typeParameter": "<> Type Param",
+    "constant": "   Constant",
+    "class": " פּ  Class",
+    "interface": " 蘒 Interface",
+    "struct": "   Struct",
+    "event": "  Event",
+    "operator": "  Operator",
+    "module": "  Module",
+    "property": "   Property",
+    "enum": " 練 Enum",
+    "reference": "  Reference",
+    "keyword": "   Keyword",
+    "file": "   File",
+    "folder": " ﱮ  Folder",
+    "color": "   Color",
+    "unit": " 塞 Unit",
+    "snippet": "  Snippet",
+    "text": "   Text",
+    "constructor": "   Constructor",
+    "value": "  Value",
+    "enumMember": "   Enum Member"
+  },
+  "snippets.ultisnips.pythonPrompt": false
+}
+
+
+========================================
+ARCHIVO: ./coc.vim
+========================================
+let g:coc_global_extensions = ['coc-emmet','coc-css','coc-blade','coc-snippets','coc-json','coc-prettier','coc-phpls']
+
+" Mappings Go To's
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gR <Plug>(coc-references)
+
+" Mappings Completion
+inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Mappings Diagnostics
+nnoremap <silent> g, <Plug>(coc-diagnostic-prev)
+nnoremap <silent> g. <Plug>(coc-diagnostic-next)
+
+" Mappings Hover Documentation
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+" Mappings Code Actions
+nnoremap ga <Plug>(coc-codeaction-cursor)
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+
+========================================
+ARCHIVO: ./comment.lua
+========================================
+require('Comment').setup{}
+
+
+========================================
+ARCHIVO: ./gitsigns.lua
+========================================
+require('gitsigns').setup{
+  signs = {
+    add          = { text = '+' },
+    change       = { text = '┃' },
+    delete       = { text = '_' },
+    topdelete    = { text = '‾' },
+    changedelete = { text = '~' },
+    untracked    = { text = 'x' },
+  },
+  signs_staged = {
+    add          = { text = '+' },
+    change       = { text = '┃' },
+    delete       = { text = '_' },
+    topdelete    = { text = '‾' },
+    changedelete = { text = '~' },
+    untracked    = { text = 'x' },
+  },
+  signs_staged_enable = true,
+  signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
+  numhl      = true, -- Toggle with `:Gitsigns toggle_numhl`
+  linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
+  word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+  
+  current_line_blame = true, -- Toggle with `:Gitsigns toggle_current_line_blame`
+  current_line_blame_opts = {
+      virt_text = true,
+      virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+      delay = 1000,
+      ignore_whitespace = false,
+      virt_text_priority = 100,
+      use_focus = true,
+    },
+
+    on_attach = function(bufnr)
+        local gitsigns = require('gitsigns')
+    
+        local function map(mode, l, r, opts)
+          opts = opts or {}
+          opts.buffer = bufnr
+          vim.keymap.set(mode, l, r, opts)
+        end
+    
+        -- Navigation
+        map('n', 'gf', function()
+          if vim.wo.diff then
+            vim.cmd.normal({'gf', bang = true})
+          else
+            gitsigns.nav_hunk('next')
+          end
+        end)
+    
+        map('n', 'gb', function()
+          if vim.wo.diff then
+            vim.cmd.normal({'gb', bang = true})
+          else
+            gitsigns.nav_hunk('prev')
+          end
+        end)
+    
+        -- Actions
+        map('n', '<leader>hs', gitsigns.stage_hunk)
+        map('n', 'gr', gitsigns.reset_hunk)
+    
+        map('v', '<leader>hs', function()
+          gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+        end)
+    
+        map('v', '<leader>hr', function()
+          gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+        end)
+    
+        map('n', '<leader>hS', gitsigns.stage_buffer)
+        map('n', '<leader>hR', gitsigns.reset_buffer)
+        map('n', 'gp', gitsigns.preview_hunk)
+        map('n', '<leader>hi', gitsigns.preview_hunk_inline)
+    
+        map('n', '<leader>hb', function()
+          gitsigns.blame_line({ full = true })
+        end)
+    
+        map('n', '<leader>hd', gitsigns.diffthis)
+    
+        map('n', '<leader>hD', function()
+          gitsigns.diffthis('~')
+        end)
+    
+        map('n', '<leader>hQ', function() gitsigns.setqflist('all') end)
+        map('n', '<leader>hq', gitsigns.setqflist)
+    
+        -- Toggles
+        map('n', '<leader>tb', gitsigns.toggle_current_line_blame)
+        map('n', '<leader>td', gitsigns.toggle_deleted)
+        map('n', '<leader>tw', gitsigns.toggle_word_diff)
+    
+        -- Text object
+        map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+      end
+}
+
+
+========================================
+ARCHIVO: ./lazy-lock.json
+========================================
+{
+  "Comment.nvim": { "branch": "master", "commit": "e30b7f2008e52442154b66f7c519bfd2f1e32acb" },
+  "avante.nvim": { "branch": "main", "commit": "e89eb79abf5754645e20aa6074da10ed20bba33c" },
+  "bufferline.nvim": { "branch": "main", "commit": "655133c3b4c3e5e05ec549b9f8cc2894ac6f51b3" },
+  "coc.nvim": { "branch": "release", "commit": "889f5e287e746973c978b383eea0f286571d8fe0" },
+  "dressing.nvim": { "branch": "master", "commit": "2d7c2db2507fa3c4956142ee607431ddb2828639" },
+  "gitsigns.nvim": { "branch": "main", "commit": "42d6aed4e94e0f0bbced16bbdcc42f57673bd75e" },
+  "lazy.nvim": { "branch": "main", "commit": "306a05526ada86a7b30af95c5cc81ffba93fef97" },
+  "lualine.nvim": { "branch": "master", "commit": "47f91c416daef12db467145e16bed5bbfe00add8" },
+  "nui.nvim": { "branch": "main", "commit": "de740991c12411b663994b2860f1a4fd0937c130" },
+  "nvim-tree.lua": { "branch": "master", "commit": "a0db8bf7d6488b1dcd9cb5b0dfd6684a1e14f769" },
+  "nvim-treesitter": { "branch": "main", "commit": "5a7e5638e7d220575b1c22c8a2e099b52231886e" },
+  "nvim-web-devicons": { "branch": "master", "commit": "803353450c374192393f5387b6a0176d0972b848" },
+  "plenary.nvim": { "branch": "master", "commit": "b9fd5226c2f76c951fc8ed5923d85e4de065e509" },
+  "render-markdown.nvim": { "branch": "main", "commit": "ae89236e2389836cf1c3787b2b80d5d8685cc13f" },
+  "telescope.nvim": { "branch": "master", "commit": "a8c2223ea6b185701090ccb1ebc7f4e41c4c9784" },
+  "toggleterm.nvim": { "branch": "main", "commit": "50ea089fc548917cc3cc16b46a8211833b9e3c7c" },
+  "tokyonight.nvim": { "branch": "main", "commit": "5da1b76e64daf4c5d410f06bcb6b9cb640da7dfd" }
+}
+
+
+========================================
+ARCHIVO: ./lua-tree.lua
+========================================
+require("nvim-tree").setup()
+
+
+========================================
+ARCHIVO: ./lualine.lua
+========================================
+require('lualine').setup{
+  options = {
+    theme = 'tokyonight'
+  }
+}
+
+
+========================================
+ARCHIVO: ./maps.vim
+========================================
+" Usual commands:
+nnoremap <C-s> :w<CR>
+nnoremap <C-q> :q<CR>
+
+" Tab navigation
+nnoremap <C-t>q :Bdelete<CR>  " akinsho/bufferline
+nnoremap <C-t>p :bprevious<CR>
+nnoremap <C-t>n :bnext<CR>
+nnoremap <C-t>o :tabnew<CR>
+inoremap <C-t>o <Esc>:tabnew<CR>
+
+"clear the search-highlight
+nnoremap // :noh<CR>
+
+" NvimTree
+nnoremap <C-n>tr :NvimTreeToggle<CR>
+
+" Terminal
+tnoremap <Esc> <C-\><C-n>
+
+" Telescope
+nnoremap <C-p> <cmd>Telescope find_files<cr>
+nnoremap <C-f> <cmd>Telescope live_grep<cr>
+nnoremap <A-f> <cmd>Telescope grep_string<cr>
+nnoremap <A-b> <cmd>Telescope buffers<cr>
+
+
+========================================
+ARCHIVO: ./nvim-treesitter.lua
+========================================
+require 'nvim-treesitter.configs'.setup{
+  ensure_installed = {
+  "angular","arduino","astro","awk",
+  "bash","bibtex",
+  "c","c_sharp","cpp","css","csv","diff", "dockerfile",
+  "fortran","git_config","git_rebase","gitattributes","gitcommit","gitignore","gnuplot",
+  "html",
+  "javascript","jsdoc","json","json5",
+  "lua",
+  "markdown","markdown_inline","matlab",
+  "nginx",
+  "perl","php","python",
+  "regex",
+  "sql",
+  "tmux","tsv","typescript","tsx",
+  "vim","vimdoc"},
+-- [[ "latex","jsx" --]]
+
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
+
+  refactor = {
+    highlight_definitions = {
+      enable = true,
+      clear_on_cursor_move = true,
+    },
+
+    highlight_current_scope = {
+      enable = true,
+    },
+
+    smart_rename = {
+      enable = true,
+--[[
+      keymaps = {
+        smart_rename = "grr"
+      },
+--]]      
+    },
+    
+    textsubjects = {
+        enable = true,
+        prev_selection = '<cr>', -- (Optional) keymap to select the previous selection
+        keymaps = {
+            [','] = 'textsubjects-smart',
+            [';'] = 'textsubjects-container-outer',
+            ['i;'] = { 'textsubjects-container-inner', desc = "Select inside containers (classes, functions, etc.)" },
+        },
+    },
+  },
+}
+
+
+========================================
+ARCHIVO: ./telescope.lua
+========================================
+require('telescope').setup{}
+
+
+========================================
+ARCHIVO: ./toggleterm.lua
+========================================
+require("toggleterm").setup{
+  open_mapping = [[<c-j>]],
+}
+
+
+========================================
+ARCHIVO: ./settings.vim
+========================================
+so ~/.config/nvim/maps.vim
+so ~/.config/nvim/coc.vim
+
+
+set rnu     " relative numbers lines.
+set number  " show actual number line of the current line.
+
+
+set hlsearch    " highlight matches.
+set incsearch   " incremental searching.
+set ignorecase  " searches are insensitive case...
+set smartcase   " ... unless they contain at least one capital letter.
+
+set clipboard=unnamedplus " to use the operating system clipboard.
+
+" ==== Theme ====
+" colorscheme elflord
+" colorscheme koehler
+" colorscheme vim
+" colorscheme wildcharm
+" colorscheme tokyonight
+colorscheme tokyonight-night
+" colorscheme tokyonight-storm
+" colorscheme tokyonight-moon
+
+set termguicolors   " from bufferline, nvim-web-devicons
+
+" ==== Terminal ====
+set hidden  " to save the state of terminals.
+
+
+========================================
+ARCHIVO: ./supercat.sh
+========================================
+for file in $(find . -maxdepth 1 -type f); do
+  echo "========================================"
+  echo "ARCHIVO: $file"
+  echo "========================================"
+  cat "$file"
+  echo -e "\n"
+done > mi_config_completa.txt
+
+
+========================================
+ARCHIVO: ./mi_config_completa.txt
+========================================
+
+
