@@ -27,3 +27,7 @@ set termguicolors   " from bufferline, nvim-web-devicons
 
 " ==== Terminal ====
 set hidden  " to save the state of terminals.
+
+" ==== errors ===="
+set signcolumn=yes " Reserva siempre el espacio para los iconos de error
+set updatetime=300 " Reduce el tiempo de espera para que aparezcan los errores (de 4000ms a 300ms)

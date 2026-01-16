@@ -1,0 +1,22 @@
+  ==== NEOCONFIG CHEATSHEET ====
+  
+  SISTEMA:
+  Ctrl+s : Guardar      Ctrl+q : Salir
+  Ctrl+j : Terminal     //     : Limpiar búsqueda
+  
+  NAVEGACIÓN:
+  Ctrl+p : Buscar Archivo    Alt+b  : Lista Buffers
+  Ctrl+f : Buscar Texto      Alt+f  : Buscar Palabra
+  Ctrl+n+tr : Arbol de Archivos
+  
+  BUFFERS (Pestañas):
+  Ctrl+t+n : Siguiente       Ctrl+t+p : Anterior
+  Ctrl+t+q : Cerrar archivo  Ctrl+t+o : Nueva pestaña
+  
+  CÓDIGO (CoC):
+  gd : Definición      K  : Documentación
+  ga : Acciones        g. : Siguiente Error
+  
+  GIT:
+  gp : Ver cambio      gf : Siguiente cambio
+  ==============================================

@@ -23,3 +23,8 @@ nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
 nnoremap <A-f> <cmd>Telescope grep_string<cr>
 nnoremap <A-b> <cmd>Telescope buffers<cr>
+
+
+" Abrir el machete en una división horizontal arriba
+" Le damos un tamaño de 12 líneas para que no tape todo
+nnoremap <leader>? :12split ~/.config/nvim/cheatsheet.txt<CR>

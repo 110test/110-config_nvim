@@ -49,13 +49,14 @@ require("lazy").setup({
   
   -- COC.nvim (Sigue siendo útil para VimScript)
   { "neoclide/coc.nvim", branch = "release" },
+  { "honza/vim-snippets" },
   
   -- Tema TokyoNight
   { "folke/tokyonight.nvim", lazy = false, priority = 1000 },
 
   -- Nerd Font
   { "nvim-tree/nvim-web-devicons" },
-
+  
   -- Render Markdown (Vista previa dentro de Neovim)
   -- Actualización de Treesitter (Importante)
   -- Para que este plugin funcione, Neovim debe entender la estructura del Markdown. Una vez que guardes el archivo y reinicies Neovim, ejecuta este comando dentro:
@@ -80,8 +81,86 @@ require("lazy").setup({
       },
     },
   },
+},
+{
+  rocks = {
+    enabled = false, -- Desactiva la advertencia de Luarocks
+  },
 })
 
 -- 3. Cargar configuraciones de VimScript (Tu antiguo init.vim y mapas)
 -- Esto carga tus settings.vim, maps.vim y coc.vim
 vim.cmd('source ' .. vim.fn.stdpath('config') .. '/settings.vim')
+
+
+-- ################
+-- Abrir Cheat Sheet al iniciar Neovim sin archivos
+-- vim.api.nvim_create_autocmd("VimEnter", {
+--   callback = function()
+--     if vim.fn.argc() == 0 then
+--       local sheet_path = vim.fn.stdpath("config") .. "/cheatsheet.txt"
+--       if vim.fn.filereadable(sheet_path) == 1 then
+--         vim.cmd("edit " .. sheet_path)
+--         -- Opcional: Hacer que el buffer sea de solo lectura y no necesite guardarse
+--         vim.bo.buftype = "nofile"
+--         vim.bo.bufhidden = "hide"
+--         vim.bo.swapfile = false
+--       end
+--     end
+--   end,
+-- })
+-- 
+-- Abrir Cheat Sheet con colores al iniciar
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    if vim.fn.argc() == 0 then
+      local sheet_path = vim.fn.stdpath("config") .. "/cheatsheet.txt"
+      if vim.fn.filereadable(sheet_path) == 1 then
+        vim.cmd("edit " .. sheet_path)
+        
+        -- Configuración del buffer
+        vim.bo.buftype = "nofile"
+        vim.bo.bufhidden = "hide"
+        vim.bo.swapfile = false
+        
+        -- --- COLORES PERSONALIZADOS ---
+        -- --- COLORES PERSONALIZADOS (VERSIÓN ROBUSTA) ---
+        vim.fn.clearmatches()
+
+        -- 1. Descripciones en GRIS (Todo lo que está después de los ':' hasta el final o espacios largos)
+        -- Lo ponemos primero para que sea la base
+        vim.fn.matchadd("Comment", ":[^ ]+", 5)
+
+        -- 2. Atajos en NARANJA (Todo lo que está ANTES de los ':')
+        -- Esta regex busca palabras, signos '+' y guiones que terminen justo antes de un ':'
+        vim.fn.matchadd("WarningMsg", "[a-zA-Z0-9+<>/-]\\+\\ze\\s*:", 15)
+
+        -- 3. Comandos especiales de la derecha que no tienen ':' pegado
+        -- Por ejemplo gd, ga, K, //
+        vim.fn.matchadd("WarningMsg", "\\v(<gd>|<ga>|<K>|<gp>|<gf>|<//>)", 15)
+
+        -- 4. Títulos entre corchetes [SECCIÓN] en CIAN
+        vim.fn.matchadd("String", "\\[.*\\]", 12)
+
+        -- 5. Título principal e iconos en MAGENTA
+        vim.fn.matchadd("Identifier", "󱊄.*󱊄", 10)
+        
+        -- 6. Forzar el símbolo '+' a ser naranja si está cerca de un Ctrl o Alt
+        vim.fn.matchadd("WarningMsg", "[CA][-+][a-z0-9]", 16)
+
+      end
+    end
+  end,
+})
+
+-- Forzar el tipo de archivo fortran para extensiones específicas
+vim.filetype.add({
+  extension = {
+    f77 = "fortran",
+    f90 = "fortran",
+    f95 = "fortran",
+    f03 = "fortran",
+    f08 = "fortran",
+    f18 = "fortran",
+  },
+})
