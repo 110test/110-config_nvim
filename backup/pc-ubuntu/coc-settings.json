@@ -62,5 +62,6 @@
   },
   "snippets.extends": {
     "blade": ["html", "php"]
-  }
+  },
+  "snippets.ultisnips.pythonPrompt": false
 }

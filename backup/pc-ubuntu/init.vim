@@ -141,3 +141,7 @@ require("ibl").setup {
     scope = { enabled = false }
 }
 EOF
+
+" Install coc-snippets, later:
+" pip3 install pynvim
+let g:python3_host_prog = '/usr/bin/python3'  " Replace with the path from 'which python3'

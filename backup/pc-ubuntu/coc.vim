@@ -1,4 +1,4 @@
-let g:coc_global_extensions = [ 'coc-blade','coc-emmet','coc-clangd','coc-css','coc-html','coc-json','coc-perl','coc-phpls','coc-prettier','coc-pyright','coc-sh','coc-snippets','coc-texlab','coc-tsserver','coc-tslint','coc-tslint-plugin']
+let g:coc_global_extensions = [ 'coc-blade','coc-emmet','coc-clangd','coc-css','coc-html','coc-html-css-support','coc-json','coc-perl','coc-phpls','coc-prettier','coc-pyright','coc-sh','coc-snippets','coc-texlab','coc-tsserver','coc-tslint','coc-tslint-plugin']
 " Others: 'coc-markdownlint' pero me resulto muy molesto, muy estricto.
 "         'coc-tailwindcss' -- funciona hasta la version v3, para Laravel quedó obsoleto ya que usa v4.
 "                               Una mejor opcion es instalar TailwindCSS de forma global (-g) en la pc

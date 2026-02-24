@@ -3,6 +3,9 @@
 ~/.config/nvim/nvim-plug/
 ~/.config/nvim/nvim-plug/plugins.vim
 ~/.config/nvim/theme/
+~/.config/nvim/snippet/
+
+---
 
 install Nerd Fonts on /usr/share/fonts
 from https://www.nerdfonts.com/font-downloads
@@ -12,9 +15,12 @@ from https://www.nerdfonts.com/font-downloads
 panel move left: <C-w>l
 panel move right: <C-w>h
 
+---
 
 FORTRAN:
 git clone https://github.com/neovim/nvim-lspconfig ~/.config/nvim/pack/nvim/start/nvim-lspconfig
+
+---
 
 TailwindCSS: (ver coc.vim)
 Instalar el LSP de forma global (-g) en la pc para que no haya incompatibilidad con Laravel/Vite que usan Tailwind v4.
@@ -24,3 +30,10 @@ y usar el servidor que tengo configurado en coc-settings.json.
 En nvim ejecutar `:CocList services` y verificar que dice: tailwindcss [running]
 Cada un par de mese ejecutar:
   sudo npm install -g @tailwindcss/language-server@latest
+
+---
+
+:checkhealt
+pip3 install pynvim 
+npm install -g neovim
+sudo apt install fd-find
